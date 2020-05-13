@@ -1,0 +1,32 @@
+Ablauf zum Laden der StecaGrid Daten in den Volkszähler
+
+- Kanal für Leistungswert über die grafische Oberfläche des Volkszählers anlegen (KanalID 12, 3a2119c0-3ad1-11e9-a204-71ec7f6e7262) 
+
+- wget http://192.168.1.251/measurements.xml
+
+- Erstellung der measurements.sql aus der measurements.xml
+(measurements.python
+from xml.dom import minidom
+xmldoc = minidom.parse('measurements.xml')
+itemlist = xmldoc.getElementsByTagName('Measurement')
+
+value = itemlist[2].attributes['Value'].value
+sql1 = 'insert into data (channel_id, timestamp, value) values (12, unix_timest$
+sql2 = 'quit';
+
+print(sql1)
+print(sql2)
+)
+
+Aufruf python ./measurements.python > measurements.sql
+
+(meassurements.sql - beispielhaft, wird erstellt)
+insert into data (channel_id, timestamp, value) values (12, unix_timestamp()*1000,120);
+quit
+)
+
+- einspielen in die Datenbank
+mysql --user=root --password=raspberry --database=volkszaehler < measurements.sql
+
+=> das ganze in ein sh script packen und per crontab aufrufen, fertig.
+Das ist sehr einfach aber läuft perfekt.

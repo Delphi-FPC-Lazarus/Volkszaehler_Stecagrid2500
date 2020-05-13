@@ -1,0 +1,11 @@
+from xml.dom import minidom
+xmldoc = minidom.parse('measurements.xml')
+itemlist = xmldoc.getElementsByTagName('Measurement')
+
+value = itemlist[2].attributes['Value'].value
+value = value.replace('nan', '0')
+sql1 = 'insert into data (channel_id, timestamp, value) values (12, unix_timestamp()*1000,%s);' % (value)
+sql2 = 'quit';
+
+print(sql1)
+print(sql2)
